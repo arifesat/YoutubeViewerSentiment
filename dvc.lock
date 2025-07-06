@@ -1,7 +1,8 @@
 schema: '2.0'
 stages:
   data_ingestion:
-    cmd: python src/data/data_ingestion.py
+    cmd: C:\Users\Arif\anaconda3\envs\youtube\python.exe 
+      src/data/data_ingestion.py
     deps:
     - path: src/data/data_ingestion.py
       hash: md5
@@ -17,7 +18,8 @@ stages:
       size: 6919701
       nfiles: 2
   data_preprocessing:
-    cmd: python src/data/data_preprocessing.py
+    cmd: C:\Users\Arif\anaconda3\envs\youtube\python.exe 
+      src/data/data_preprocessing.py
     deps:
     - path: data/raw/test.csv
       hash: md5
@@ -29,13 +31,13 @@ stages:
       size: 5571089
     - path: src/data/data_preprocessing.py
       hash: md5
-      md5: f997a07ec5d812b43a2bfa7ca740e7a0
-      size: 3715
+      md5: 0aa9f921d835751280f08ee3fb19e942
+      size: 2990
     outs:
     - path: data/interim
       hash: md5
-      md5: ba42408e7bd1e85685474d6a349ae57e.dir
-      size: 5134850
+      md5: 551dbc03b49d101d32b44a27c7827894.dir
+      size: 6710408
       nfiles: 2
   model_building:
     cmd: python src/model/model_building.py

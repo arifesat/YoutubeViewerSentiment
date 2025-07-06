@@ -25,7 +25,7 @@ logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
 nltk.download('wordnet')
-nltk.downlaod('stopwords')
+nltk.download('stopwords')
 
 def preprocess_comment(comment):
     try:
@@ -56,7 +56,7 @@ def normalize_text(df):
 def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
     try:
         interim_data_path = os.path.join(data_path, 'interim')
-        logegr.debug(f"Creating directory {interim_data_path}")
+        logger.debug(f"Creating directory {interim_data_path}")
 
         os.makedirs(interim_data_path, exist_ok=True)
 
