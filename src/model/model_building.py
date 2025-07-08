@@ -78,7 +78,7 @@ def apply_tfidf(train_data: pd.DataFrame, max_features: int, ngram_range: tuple)
         raise
 
 
-def train_light_bm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: float, max_depth: int, n_estimators: int) -> lgb.LGBMClassifier:
+def train_lgbm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: float, max_depth: int, n_estimators: int) -> lgb.LGBMClassifier:
     try:
         best_model = lgb.LGBMClassifier(
             objective = 'multiclass',
@@ -100,3 +100,37 @@ def train_light_bm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: floa
         logger.error('Unexpected error occurred while training LightBM model: %s', e)
         raise
 
+def save_model(model, file_path: str) -> None:
+    try:
+        with open(file_path, 'wb') as file:
+            pickle.dump(model, file)
+        logger.debug('Model saved to %s', file_path)
+    except Exception as e:
+        logger.error('Unexpected error occurred while saving the model: %s', e)
+        raise
+
+def main():
+    try:
+        root_dir = get_root_directory()
+
+        params = load_params(os.path.join(root_dir, 'params.yaml'))
+        max_featues = params['model_building']['max_features']
+        ngram_range = tuple(params['model_building']['ngram_range'])
+
+        learning_rate = params['model_building']['learnining_rate']
+        max_depth = params['model_building']['max_depth']
+        n_estimators = params['model_building']['n_estimators']
+
+        train_data = load_data(os.path.join(root_dir, 'data/interim/train_processed.csv'))
+
+        X_train_tfidf, y_train = apply_tfidf(train_data, max_featues, ngram_range)
+
+        best_model = train_lgbm(X_train_tfidf, y_train, learning_rate, max_depth, n_estimators)
+
+        save_model(best_model, os.path.join(root_dir, 'lgbm_model.pkl'))
+
+    except Exception as e:
+        logger.error('Failed to complete building model: %s', e)
+
+if __name__ == "__main__":
+    main()
