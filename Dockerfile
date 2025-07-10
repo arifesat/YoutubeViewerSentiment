@@ -2,9 +2,17 @@ FROM python:3.11-slim-buster
 
 WORKDIR /app
 
-COPY . /app
+# Copy requirements first for better caching
+COPY requirements.txt /app/
 
-RUN pip install -r requirements.txt
+# Install dependencies and clean up in single layer
+RUN pip install --no-cache-dir -r requirements.txt && \
+    rm -rf /root/.cache/pip/* && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy application code
+COPY . /app
 
 EXPOSE 8080
 
