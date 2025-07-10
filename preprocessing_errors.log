@@ -1,2 +1,0 @@
-2025-07-06 15:32:05,206 - data_preprocessing - ERROR - Error occurred while saving data: name 'logegr' is not defined
-2025-07-06 15:32:05,206 - data_preprocessing - ERROR - Failed to complete the data preprocessing process: name 'logegr' is not defined
