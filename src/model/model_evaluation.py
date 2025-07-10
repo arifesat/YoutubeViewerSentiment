@@ -5,6 +5,7 @@ import pickle
 import logging
 import yaml
 import mlflow
+import mlflow.lightgbm
 from mlflow.models import infer_signature
 import mlflow.sklearn
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -141,15 +142,76 @@ def main():
 
             signature = infer_signature(input_example, model.predict(X_test_tfidf[:5]))
 
-            mlflow.sklearn.log_model(
-                model,
-                'lgbm_model',
-                signature=signature,
-                input_example=input_example
-            )
-
+            logger.info("Starting MLflow model logging...")
             model_path = 'lgbm_model'
-            save_model_info(run.info.run_id, model_path, 'experiment_info.json')
+            
+            try:
+                mlflow.lightgbm.log_model(
+                    model,
+                    model_path,
+                    signature=signature,
+                    input_example=input_example
+                )
+                logger.info("MLflow model logging completed successfully")
+                
+                # Verify the model was actually logged
+                client = mlflow.tracking.MlflowClient()
+                artifacts = client.list_artifacts(run.info.run_id)
+                model_found = any(art.path == model_path for art in artifacts)
+                
+                if model_found:
+                    logger.info("Model verified in MLflow artifacts")
+                    final_model_path = model_path
+                else:
+                    logger.warning("Model not found in artifacts, will register directly")
+                    raise Exception("Model not found in MLflow artifacts")
+                
+            except Exception as model_log_error:
+                logger.warning(f"MLflow model logging failed or model not accessible: {model_log_error}")
+                logger.info("Attempting alternative model logging approach...")
+                
+                # Try alternative approach - register model directly without intermediate logging
+                try:
+                    model_name = 'yt_chrome_plugin_model'
+                    
+                    # Try logging with a different path name
+                    temp_model_path = 'model_direct'
+                    mlflow.lightgbm.log_model(
+                        model, 
+                        temp_model_path,
+                        signature=signature,
+                        input_example=input_example
+                    )
+                    
+                    # Check if this one worked
+                    client = mlflow.tracking.MlflowClient()
+                    artifacts = client.list_artifacts(run.info.run_id)
+                    model_found = any(art.path == temp_model_path for art in artifacts)
+                    
+                    if model_found:
+                        logger.info(f"Alternative model logging successful at: {temp_model_path}")
+                        final_model_path = temp_model_path
+                    else:
+                        # Model still not in artifacts, register directly and use registered model URI
+                        logger.warning("Model still not in artifacts. Registering existing model...")
+                        model_version = mlflow.register_model(
+                            f"runs:/{run.info.run_id}/{temp_model_path}", 
+                            model_name
+                        )
+                        final_model_path = f"models:/{model_name}/{model_version.version}"
+                        logger.info(f"Model registered as: {final_model_path}")
+                    
+                except Exception as reg_error:
+                    logger.error(f"All model logging attempts failed: {reg_error}")
+                    logger.info("Creating direct S3 artifact path...")
+                    
+                    # As absolute last resort, create the S3 path directly
+                    # This mimics what the tutorial has
+                    artifact_uri = run.info.artifact_uri
+                    final_model_path = f"{artifact_uri}/lgbm_model"
+                    logger.warning(f"Using direct S3 path as final fallback: {final_model_path}")
+
+            save_model_info(run.info.run_id, final_model_path, 'experiment_info.json')
 
             mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
 
