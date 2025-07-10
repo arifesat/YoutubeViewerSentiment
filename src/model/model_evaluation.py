@@ -78,7 +78,8 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
         cm = confusion_matrix(y_test, y_pred)
 
         logger.debug('Model evaluation completed')
-
+        
+        return report, cm
     except Exception as e:
         logger.error('Unexpected error occurred while evaluating model: %s', e)
         raise
@@ -142,12 +143,12 @@ def main():
 
             mlflow.sklearn.log_model(
                 model,
-                'lgmb_model',
+                'lgbm_model',
                 signature=signature,
                 input_example=input_example
             )
 
-            model_path = 'lbgm_model'
+            model_path = 'lgbm_model'
             save_model_info(run.info.run_id, model_path, 'experiment_info.json')
 
             mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
@@ -156,7 +157,7 @@ def main():
 
             for label, metrics in report.items():
                 if isinstance(metrics, dict):
-                    mlflow.log_metric({
+                    mlflow.log_metrics({
                         f"test_{label}_precision": metrics['precision'],
                         f"test_{label}_recall": metrics['recall'],
                         f"test_{label}_f1-score": metrics['f1-score'],

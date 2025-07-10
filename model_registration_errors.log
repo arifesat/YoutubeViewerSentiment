@@ -1,0 +1,2 @@
+2025-07-10 14:06:36,712 - model_registration - ERROR - Unexpected error occurred while model registration: Unable to find a logged_model with artifact_path lbgm_model under run 51f2a9f5d6984fe490af1e238886327a
+2025-07-10 14:06:36,713 - model_registration - ERROR - Failed to complete the model registration process: Unable to find a logged_model with artifact_path lbgm_model under run 51f2a9f5d6984fe490af1e238886327a

@@ -38,16 +38,16 @@ stages:
       size: 6710408
       nfiles: 2
   model_building:
-    cmd: python src/model/model_building.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/model/model_building.py'
     deps:
     - path: data/interim/train_processed.csv
       hash: md5
-      md5: 35027dfda8274bd9356544f2ff358aa4
-      size: 4134324
+      md5: 92ab7f19907d38a56686f16a4d8db101
+      size: 5402427
     - path: src/model/model_building.py
       hash: md5
-      md5: 7535a489e792c486bd48d008c4e673c4
-      size: 5474
+      md5: b14c3bffd9102c5078b4806541a90da6
+      size: 4777
     params:
       params.yaml:
         model_building.learning_rate: 0.09
@@ -60,39 +60,39 @@ stages:
     outs:
     - path: lgbm_model.pkl
       hash: md5
-      md5: feb66a4153c18043a06d474208c661bf
-      size: 3886723
+      md5: 3ee5f756a3626fa1f7934ec58601362f
+      size: 3915607
     - path: tfidf_vectorizer.pkl
       hash: md5
-      md5: 0fef1cfab7f15ebae4d8d21e5253f1be
-      size: 36874
+      md5: 86954bd047377abad97a86cf0ee200de
+      size: 36982
   model_evaluation:
-    cmd: python src/model/model_evaluation.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/model/model_evaluation.py'
     deps:
     - path: data/interim/test_processed.csv
       hash: md5
-      md5: 4f30375397ec89fead1745ee6d70f201
-      size: 1000526
+      md5: c49df6a7505b1f028ce86176dcc94b0d
+      size: 1307981
     - path: data/interim/train_processed.csv
       hash: md5
-      md5: 35027dfda8274bd9356544f2ff358aa4
-      size: 4134324
+      md5: 92ab7f19907d38a56686f16a4d8db101
+      size: 5402427
     - path: lgbm_model.pkl
       hash: md5
-      md5: feb66a4153c18043a06d474208c661bf
-      size: 3886723
+      md5: 3ee5f756a3626fa1f7934ec58601362f
+      size: 3915607
     - path: src/model/model_evaluation.py
       hash: md5
-      md5: 2eca7ba9e7e434c2f12ee9fa2188e918
-      size: 7168
+      md5: e01019e5b422ac4b3526f8abd749ebc7
+      size: 6076
     - path: tfidf_vectorizer.pkl
       hash: md5
-      md5: 0fef1cfab7f15ebae4d8d21e5253f1be
-      size: 36874
+      md5: 86954bd047377abad97a86cf0ee200de
+      size: 36982
     outs:
     - path: experiment_info.json
       hash: md5
-      md5: 6de69f257408e2d22dbe0e092f9c95a9
+      md5: c30b36ae89b96f9a9ed8778362e56b50
       size: 87
   model_registration:
     cmd: python src/model/register_model.py
