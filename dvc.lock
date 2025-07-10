@@ -1,8 +1,7 @@
 schema: '2.0'
 stages:
   data_ingestion:
-    cmd: C:\Users\Arif\anaconda3\envs\youtube\python.exe 
-      src/data/data_ingestion.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/data/data_ingestion.py'
     deps:
     - path: src/data/data_ingestion.py
       hash: md5
@@ -18,8 +17,7 @@ stages:
       size: 6919701
       nfiles: 2
   data_preprocessing:
-    cmd: C:\Users\Arif\anaconda3\envs\youtube\python.exe 
-      src/data/data_preprocessing.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/data/data_preprocessing.py'
     deps:
     - path: data/raw/test.csv
       hash: md5

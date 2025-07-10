@@ -94,7 +94,7 @@ def train_lgbm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: float, m
         )
 
         best_model.fit(X_train, y_train)
-        logger.debug('LightBM model trainin compelte')
+        logger.debug('LightGBM model training completed')
         return best_model
     except Exception as e:
         logger.error('Unexpected error occurred while training LightBM model: %s', e)
@@ -114,16 +114,16 @@ def main():
         root_dir = get_root_directory()
 
         params = load_params(os.path.join(root_dir, 'params.yaml'))
-        max_featues = params['model_building']['max_features']
+        max_features = params['model_building']['max_features']
         ngram_range = tuple(params['model_building']['ngram_range'])
 
-        learning_rate = params['model_building']['learnining_rate']
+        learning_rate = params['model_building']['learning_rate']
         max_depth = params['model_building']['max_depth']
         n_estimators = params['model_building']['n_estimators']
 
         train_data = load_data(os.path.join(root_dir, 'data/interim/train_processed.csv'))
 
-        X_train_tfidf, y_train = apply_tfidf(train_data, max_featues, ngram_range)
+        X_train_tfidf, y_train = apply_tfidf(train_data, max_features, ngram_range)
 
         best_model = train_lgbm(X_train_tfidf, y_train, learning_rate, max_depth, n_estimators)
 

@@ -1,3 +1,5 @@
 /tutorial
 .env
 /mlruns
+/data/raw
+/data/interim

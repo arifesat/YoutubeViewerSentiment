@@ -1,6 +1,6 @@
 stages:
   data_ingestion:
-    cmd: python src/data/data_ingestion.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/data/data_ingestion.py'
     deps:
     - src/data/data_ingestion.py
     params:
@@ -10,7 +10,7 @@ stages:
 
   
   data_preprocessing:
-    cmd: python src/data/data_preprocessing.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/data/data_preprocessing.py'
     deps:
     - data/raw/train.csv
     - data/raw/test.csv
@@ -21,7 +21,7 @@ stages:
 
   
   model_building:
-    cmd: python src/model/model_building.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/model/model_building.py'
     deps:
     - data/interim/train_processed.csv
     - src/model/model_building.py
@@ -38,7 +38,7 @@ stages:
 
   
   model_evaluation:
-    cmd: python src/model/model_evaluation.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/model/model_evaluation.py'
     deps:
     - lgbm_model.pkl
     - tfidf_vectorizer.pkl
@@ -51,7 +51,7 @@ stages:
 
   
   model_registration:
-    cmd: python src/model/register_model.py
+    cmd: '"%CONDA_PREFIX%\python.exe" src/model/register_model.py'
     deps:
     - experiment_info.json
     - src/model/register_model.py
