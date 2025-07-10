@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "YouTube Sentiment Insights",
+  "version": "1.0",
+  "description": "Analyzes YouTube video comments for sentiment.",
+  
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "YouTube Sentiment Insights"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/watch*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "http://localhost/*",
+    "https://www.googleapis.com/*",
+    "*://www.youtube.com/*"
+  ],
+  
+  "content_security_policy": "script-src 'self'; object-src 'self'"
+}

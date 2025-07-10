@@ -1,0 +1,76 @@
+/* content.css - Styles for sentiment indicators on YouTube comments */
+
+.sentiment-indicator {
+  font-family: 'Roboto', Arial, sans-serif !important;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.sentiment-indicator .sentiment-emoji {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.sentiment-indicator .sentiment-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hover effects */
+.sentiment-indicator:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .sentiment-indicator {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+}
+
+/* YouTube Dark theme compatibility */
+[dark] .sentiment-indicator,
+html[dark] .sentiment-indicator,
+.yt-spec-base-background .sentiment-indicator {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .sentiment-indicator {
+    font-size: 10px !important;
+    padding: 1px 4px !important;
+    margin-left: 4px !important;
+  }
+  
+  .sentiment-indicator .sentiment-emoji {
+    font-size: 10px !important;
+  }
+  
+  .sentiment-indicator .sentiment-label {
+    font-size: 8px !important;
+  }
+}
+
+/* Animation for new sentiment indicators */
+.sentiment-indicator {
+  animation: sentiment-fade-in 0.3s ease-out;
+}
+
+@keyframes sentiment-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
