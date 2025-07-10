@@ -5,7 +5,7 @@
   'use strict';
   
   const API_KEY = 'AIzaSyD_2XJ1sZFnvLYfJDF5MgFSty6CRK2QcOE';
-  const API_URL = 'http://localhost:5000/';
+  const API_URL = 'http://3.239.173.175:8080/';
   
   let processedComments = new Set();
   let isProcessing = false;

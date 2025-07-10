@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const API_KEY = 'AIzaSyD_2XJ1sZFnvLYfJDF5MgFSty6CRK2QcOE';
   
   // API endpoints - you can modify these as needed
-  const API_URL = 'http://localhost:5000/';
-//   const API_URL = 'http://23.20.221.231:8080/';
+  // const API_URL = 'http://localhost:5000/';
+  const API_URL = 'http://3.239.173.175:8080/';
 
   // Get the current tab's URL using Firefox's browser API
   try {
