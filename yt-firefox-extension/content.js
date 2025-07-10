@@ -82,13 +82,19 @@
         const commentId = `comment_${index}_${commentText.substring(0, 50)}`;
         
         if (!processedComments.has(commentId) && commentText.length > 0) {
-          newComments.push({
-            text: commentText,
-            timestamp: new Date().toISOString(),
-            authorId: `user_${index}`
-          });
-          commentMap.set(commentText, element);
-          processedComments.add(commentId);
+          // Check cache first
+          if (sentimentCache.has(commentText)) {
+            addSentimentIndicator(element, sentimentCache.get(commentText));
+            processedComments.add(commentId);
+          } else {
+            newComments.push({
+              text: commentText,
+              timestamp: new Date().toISOString(),
+              authorId: `user_${index}`
+            });
+            commentMap.set(commentText, element);
+            processedComments.add(commentId);
+          }
         }
       });
       
@@ -97,19 +103,36 @@
         return;
       }
       
-      console.log(`Processing ${newComments.length} new comments...`);
+      console.log(`Processing ${newComments.length} new comments... (Total processed: ${processedComments.size})`);
       
-      // Get sentiment predictions
-      const predictions = await getSentimentPredictions(newComments);
-      
-      if (predictions && predictions.length > 0) {
-        // Add sentiment indicators to comments
-        predictions.forEach((prediction) => {
-          const element = commentMap.get(prediction.comment);
-          if (element) {
-            addSentimentIndicator(element, prediction.sentiment);
+      // Process comments in batches to avoid overwhelming the API
+      const batchSize = 50; // Process 50 comments at a time
+      for (let i = 0; i < newComments.length; i += batchSize) {
+        const batch = newComments.slice(i, i + batchSize);
+        
+        try {
+          const predictions = await getSentimentPredictions(batch);
+          
+          if (predictions && predictions.length > 0) {
+            // Add sentiment indicators to comments and cache results
+            predictions.forEach((prediction) => {
+              const element = commentMap.get(prediction.comment);
+              if (element) {
+                addSentimentIndicator(element, prediction.sentiment);
+                sentimentCache.set(prediction.comment, prediction.sentiment);
+              }
+            });
           }
-        });
+          
+          // Small delay between batches to avoid rate limiting
+          if (i + batchSize < newComments.length) {
+            await new Promise(resolve => setTimeout(resolve, 200));
+          }
+          
+        } catch (error) {
+          console.error(`Error processing batch ${Math.floor(i/batchSize) + 1}:`, error);
+          // Continue with next batch even if one fails
+        }
       }
       
     } catch (error) {

@@ -4,7 +4,7 @@ This Firefox extension analyzes YouTube video comments for sentiment using machi
 
 ## Features
 
-- **Real-time Sentiment Analysis**: Analyzes up to 500 comments from any YouTube video
+- **Real-time Sentiment Analysis**: Analyzes all available comments from any YouTube video (up to API limits)
 - **Inline Comment Sentiment**: Shows sentiment indicators (😊 Positive, 😐 Neutral, 😞 Negative) directly on YouTube comments
 - **Visual Analytics**: 
   - Sentiment distribution pie chart

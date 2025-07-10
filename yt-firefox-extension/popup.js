@@ -153,8 +153,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function fetchComments(videoId) {
     let comments = [];
     let pageToken = "";
+    let requestCount = 0;
+    const maxRequests = 50; // Safety limit to prevent infinite loops (5000 comments max)
+    
     try {
-      while (comments.length < 500) {
+      while (requestCount < maxRequests) {
         const response = await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=100&pageToken=${pageToken}&key=${API_KEY}`);
         const data = await response.json();
         
@@ -162,18 +165,39 @@ document.addEventListener("DOMContentLoaded", async () => {
           throw new Error(data.error.message || 'YouTube API error');
         }
         
-        if (data.items) {
+        if (data.items && data.items.length > 0) {
           data.items.forEach(item => {
             const commentText = item.snippet.topLevelComment.snippet.textOriginal;
             const timestamp = item.snippet.topLevelComment.snippet.publishedAt;
             const authorId = item.snippet.topLevelComment.snippet.authorChannelId?.value || 'Unknown';
             comments.push({ text: commentText, timestamp: timestamp, authorId: authorId });
           });
+          
+          // Update progress
+          outputDiv.innerHTML = outputDiv.innerHTML.replace(
+            /Fetched \d+ comments\./,
+            `Fetched ${comments.length} comments.`
+          );
+        } else {
+          // No more comments available
+          break;
         }
         
         pageToken = data.nextPageToken;
+        requestCount++;
+        
+        // If no more pages, break
         if (!pageToken) break;
+        
+        // Add a small delay to avoid hitting rate limits
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
+      
+      if (requestCount >= maxRequests) {
+        console.log(`Reached maximum request limit. Fetched ${comments.length} comments.`);
+        outputDiv.innerHTML += `<div style="color: #FF9800; font-size: 12px; margin: 5px 0;">Note: Fetched ${comments.length} comments (limited by API rate limits)</div>`;
+      }
+      
     } catch (error) {
       console.error("Error fetching comments:", error);
       outputDiv.innerHTML += `<div class="error">Error fetching comments: ${error.message}</div>`;
